@@ -1,22 +1,19 @@
 package com.jing.base;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Stack;
 
 /**
- * 矩阵中的路径
+ * 矩阵中的路径_书中接法
  * 回溯法
  * @author GuoJingyuan
  * @date 2019/10/18
  */
-public class RectanglePath {
+public class RectanglePathBook {
     public static void main(String[] args) {
         char[][] data = {{'a', 'b', 't', 'g'}, {'c', 'f', 'c', 's'},
                 {'j', 'd', 'e', 'h'}};
-        List<String> match = new LinkedList<>();
-        boolean x = new RectanglePath().have(data, "bfce", match);
+        LinkedList<String> match = new LinkedList<>();
+        boolean x = new RectanglePathBook().havePath(data, "bfce", match);
         System.out.println(x);
         if (x) {
             for (String m : match) {
@@ -25,87 +22,60 @@ public class RectanglePath {
         }
 
     }
-    boolean have(char[][] data, String target, List<String> match) {
-        Stack<List<Integer>> stack = new Stack<>();
-        char[] targetAry = target.toCharArray();
-        int num = data.length;
-        if (num < 1) {
+    boolean havePath(char[][] data, String target, LinkedList<String> match) {
+        int rowLen = data.length;
+        if (rowLen < 1) {
             return false;
         }
-        int len = data[0].length;
-        int targetIndex = 0;
-        char tc = targetAry[targetIndex];
-        int fi = 0, fj = 0;
-        boolean hf = false;
-        for (int i = 0; i < num; i++) {
-            for (int j = 0; j < len; j++) {
-                if (data[i][j] == tc) {
-                    fi = i;
-                    fj = j;
-                    push(stack, fi, fj);
-                    hf = true;
-                }
-            }
-        }
-        if (!hf) {
+        int colLen = data[0].length;
+        if (colLen < 1) {
             return false;
         }
-        match.add(fi + "," + fj);
-        while (targetIndex < targetAry.length - 1) {
-            targetIndex++;
-            tc = targetAry[targetIndex];
-            //上
-            if (fi > 0) {
-                if (tc == data[fi - 1][fj]) {
-                    --fi;
-                    match.add(fi + "," + fj);
-                    push(stack, fi, fj);
-                    continue;
+        boolean[][] through = new boolean[rowLen][colLen];
+        char[] path = target.toCharArray();
+        for (int r = 0; r < rowLen; r++) {
+            for (int c = 0; c < colLen; c++) {
+                if (havePathCore(data, r, c, 0, path, through, match)) {
+                    return true;
                 }
             }
-            //右
-            if (fj < len) {
-                if (tc == data[fi][fj + 1]) {
-                    ++fj;
-                    match.add(fi + "," + fj);
-                    push(stack, fi, fj);
-                    continue;
-                }
-            }
-            //下
-            if (fi < num-1) {
-                if (tc == data[fi + 1][fj]) {
-                    ++fi;
-                    match.add(fi + "," + fj);
-                    push(stack, fi, fj);
-                    continue;
-                }
-            }
-            //左
-            if (fj > 0) {
-                if (tc == data[fi][fj - 1]) {
-                    --fj;
-                    match.add(fi + "," + fj);
-                    push(stack, fi, fj);
-                    continue;
-                }
-            }
-
-            if (stack.empty()) {
-                return false;
-            }
-            ((LinkedList<String>) match).removeLast();
-            targetIndex--;
-            List<Integer> lastMatch = stack.pop();
-            fi = lastMatch.get(0);
-            fj = lastMatch.get(1);
         }
-        return true;
+        return false;
     }
-    void push(Stack <List<Integer>> stack, int i, int j) {
-        List<Integer> adL = new ArrayList<>();
-        adL.add(i);
-        adL.add(j);
-        stack.push(adL);
+
+    /**
+     * 当前路径是否符合
+     * @param data 坐标数组
+     * @param row 行
+     * @param col 列
+     * @param pathLength 当前路径所在位置
+     * @param path 路径数组
+     * @param through 当前坐标是否经过过
+     * @param match 符合的坐标
+     * @return
+     */
+    boolean havePathCore(char[][] data, int row, int col, int pathLength, char[] path, boolean[][] through, LinkedList<String> match) {
+        if (pathLength == path.length) {
+            return true;
+        }
+        boolean hasPath = false;
+        if (row >= 0 && row < data.length && col >= 0 && col < data[0].length
+                && data[row][col] == path[pathLength] && !through[row][col]) {
+            pathLength++;
+            through[row][col] = true;
+            match.add(row + "," + col);
+            hasPath = havePathCore(data, row+1, col, pathLength, path, through, match)
+                    ||havePathCore(data, row, col+1, pathLength, path, through, match)
+                    ||havePathCore(data, row-1, col, pathLength, path, through, match)
+                    ||havePathCore(data, row, col-1, pathLength, path, through, match);
+            if (!hasPath) {
+                pathLength--;
+                through[row][col] = false;
+                match.removeLast();
+            }
+        }
+
+        return hasPath;
+
     }
 }

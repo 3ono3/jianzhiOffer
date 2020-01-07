@@ -3,19 +3,6 @@ package com.jing.base;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * 根据前序和中序重建二叉树
- * @author GuoJingyuan
- * @date 2019/11/12
- */
-class BinaryTreeNode{
-    int value;
-    BinaryTreeNode left;
-    BinaryTreeNode right;
-    public BinaryTreeNode(int val) {
-        this.value = val;
-    }
-}
 public class ReconstructionBinaryTree {
 
     public static void main(String[] args) {

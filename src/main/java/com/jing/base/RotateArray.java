@@ -9,16 +9,23 @@ package com.jing.base;
  */
 public class RotateArray {
 
+    public static void main(String[] args) {
+        int[] original = {3,4,5,1,2};
+        System.out.println(new RotateArray().lessEle(original));
+    }
 
     public int lessEle(int[] original) {
         int low = 0;
         int height = original.length - 1;
         int middle = 0;
-        while (low < height) {
+        while (low <= height) {
+            if (height - low < 2) {
+                return original[height] > original[low] ? original[low] : original[height];
+            }
             middle = low + (height - low) / 2;
-            if (original[height] < original[middle]) {
+            if (original[low] <= original[middle]) {
                 low = middle;
-            } else if (original[low] > original[middle] && original[middle-1] < original[middle]) {
+            } else if (original[middle] <= original[height]) {
                 height = middle;
             }
         }
