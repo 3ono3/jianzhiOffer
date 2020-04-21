@@ -17,7 +17,6 @@ import java.util.TimeZone;
 public class ExcelJingWei {
     public static void main(String[] args) {
         new ExcelJingWei().excute();
-        TimeZone zone = TimeZone.getTimeZone();
     }
      void excute(){
 
